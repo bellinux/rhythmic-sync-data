@@ -1,4 +1,4 @@
-data <- read.table("C:/Users/Alessio/Google Drive/Progetti/Sequence/Age-Gender-Effect/mdpi/data/data.csv", sep=";", header=T)
+data <- read.table("/dir/to/data.csv", sep=";", header=T)
 library("ggpubr")
 library("psych")
 require(gridExtra)
