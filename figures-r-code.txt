@@ -1,0 +1,347 @@
+data <- read.table("C:/Users/Alessio/Google Drive/Progetti/Sequence/Age-Gender-Effect/mdpi/data/data.csv", sep=";", header=T)
+library("ggpubr")
+library("psych")
+require(gridExtra)
+
+male <- subset(data, subset=!(Sex=='Female'))
+female <- subset(data, subset=!(Sex=='Male'))
+nosound <- subset(data, subset=!(Groups=='Female-Sound'|Groups=='Male-Sound'))
+asyncsound <- subset(data, subset=!(Groups=='Female-Mute'|Groups=='Male-Mute'))
+
+male1825 <- subset(male, subset=!(AgeStrateBigger!='18-25'))
+male2640 <- subset(male, subset=!(AgeStrateBigger!='26-40'))
+male41 <- subset(male, subset=!(AgeStrateBigger!='41+'))
+
+female1825 <- subset(female, subset=!(AgeStrateBigger!='18-25'))
+female2640 <- subset(female, subset=!(AgeStrateBigger!='26-40'))
+female41 <- subset(female, subset=!(AgeStrateBigger!='41+'))
+
+nosound1825 <- subset(nosound, subset=!(AgeStrateBigger!='18-25'))
+nosound2640 <- subset(nosound, subset=!(AgeStrateBigger!='26-40'))
+nosound41 <- subset(nosound, subset=!(AgeStrateBigger!='41+'))
+
+asyncsound1825 <- subset(asyncsound, subset=!(AgeStrateBigger!='18-25'))
+asyncsound2640 <- subset(asyncsound, subset=!(AgeStrateBigger!='26-40'))
+asyncsound41 <- subset(asyncsound, subset=!(AgeStrateBigger!='41+'))
+
+
+
+
+
+
+
+
+#Figure 6
+gender_names <- list(
+  'Female'="F",
+  'Male'="M"
+)
+gender_labeller <- function(variable,value){
+  return(gender_names[value])
+}
+plotAllE <-ggplot(data, aes(Condition,Error, fill=Condition), colour="gray") + #stat_compare_means(paired = TRUE, size = 3, method = "wilcox.test", label.x = 1, label.y = 31, label = "p.format")+
+    geom_boxplot(show.legend = F) +
+    #geom_line(aes(group=Paired), position = position_dodge(0.7), alpha = 0.3, show.legend = F) +
+    #geom_point(aes(group=Paired),size=2, shape=1, position = position_dodge(0.7),alpha = 0.3, show.legend = F)+
+    labs(size = "Age")+
+    xlab("")+ ylab("Error")+
+    theme(legend.position="none", text = element_text(size = 15), axis.text.x=element_blank(),plot.margin = unit(c(21, 0,6,0), "pt"),
+          axis.ticks.x=element_blank())
+plotSexE <-ggplot(data, aes(Condition,Error, fill=Condition), colour="gray") +#stat_compare_means(paired = TRUE, size = 3, method = "wilcox.test", label.x = 1, label.y = 31, label = "p.format")+
+    geom_boxplot(show.legend = F) +
+    facet_grid(~Sex, labeller=gender_labeller)+
+    #geom_line(aes(group=Paired), position = position_dodge(0.7), alpha = 0.3, show.legend = F) +
+    #geom_point(aes(group=Paired),size=2, shape=1, position = position_dodge(0.7),alpha = 0.3, show.legend = F)+
+    labs(size = "Age")+
+    xlab("")+ ylab("")+
+    theme(legend.position="none", text = element_text(size = 15), axis.text.x=element_blank(),axis.text.y =element_blank(),plot.margin = unit(c(0, 0,6,0), "pt"),
+          axis.ticks.x=element_blank())
+plotFemaleE <- ggplot(female, aes(Condition,Error, fill=Condition), colour="gray") +#stat_compare_means(paired = TRUE, size = 3, method = "wilcox.test", label.x = 1, label.y = 31, label = "p.format")+
+    geom_boxplot(show.legend = F) +
+    facet_grid(~AgeStrateBigger)+
+    #geom_line(aes(group=Paired), color="black", position = position_dodge(0.7), alpha = 0.3, show.legend = F) +
+    #geom_point(aes(group=Paired), color="black",size=2, shape=1, position = position_dodge(0.7),alpha = 0.3, show.legend = F)+
+    labs(size = "Age")+
+    xlab("")+ ylab("")+
+    theme(legend.position="none", text = element_text(size = 15), axis.text.x=element_blank(),axis.text.y =element_blank(),plot.margin = unit(c(0, 0,6,0), "pt"),
+          axis.ticks.x=element_blank())
+plotMaleE <- ggplot(male, aes(Condition,Error, fill=Condition), colour="gray") +#stat_compare_means(paired = TRUE, size = 3, method = "wilcox.test", label.x =  1, label.y = 31, label = "p.format")+
+    geom_boxplot(show.legend = T) +
+    facet_grid(~AgeStrateBigger)+
+    #geom_line(aes(group=Paired), color="black", position = position_dodge(0.7), alpha = 0.3, show.legend = F) +
+    #geom_point(aes(group=Paired), color="black",size=2, shape=1, position = position_dodge(0.7),alpha = 0.3, show.legend = F)+
+    labs(size = "Age")+
+    xlab("")+ ylab("")+
+    theme(legend.position="none", text = element_text(size = 15), axis.text.x=element_blank(),axis.text.y =element_blank(), legend.title = element_blank(),plot.margin = unit(c(0, 75,6,0), "pt"),
+          axis.ticks.x=element_blank(), legend.key.size = unit(0.5, 'cm'), legend.key.height = unit(1.5, 'cm'), legend.text = element_text(size=11)) + 
+    guides(color = guide_legend(title.position = "top", 
+                                # hjust = 0.5 centres the title horizontally
+                                title.hjust = 0.5,
+                                label.position = "bottom")) 
+errG <- grid.arrange(plotAllE,plotSexE, plotFemaleE, plotMaleE,widths=c(0.16, 0.24, 0.4, 0.54), ncol=4)
+plotAllT <-ggplot(data, aes(Condition,Time, fill=Condition), colour="gray") + #stat_compare_means(paired = TRUE, size = 3, method = "wilcox.test", label.x = 1, label.y = 31, label = "p.format")+
+    geom_boxplot(show.legend = F) +
+    #geom_line(aes(group=Paired), position = position_dodge(0.7), alpha = 0.3, show.legend = F) +
+    #geom_point(aes(group=Paired),size=2, shape=1, position = position_dodge(0.7),alpha = 0.3, show.legend = F)+
+    labs(size = "Age")+
+    xlab("All")+ ylab("Time (ms)")+
+    theme(legend.position="none", text = element_text(size = 15), axis.text.x=element_blank(),plot.margin = unit(c(21,0,0,0), "pt"),
+          axis.ticks.x=element_blank())
+plotSexT <-ggplot(data, aes(Condition,Time, fill=Condition), colour="gray") +#stat_compare_means(paired = TRUE, size = 3, method = "wilcox.test", label.x = 1, label.y = 31, label = "p.format")+
+    geom_boxplot(show.legend = F) +
+    facet_grid(~Sex, labeller=gender_labeller)+
+    #geom_line(aes(group=Paired), position = position_dodge(0.7), alpha = 0.3, show.legend = F) +
+    #geom_point(aes(group=Paired),size=2, shape=1, position = position_dodge(0.7),alpha = 0.3, show.legend = F)+
+    labs(size = "Age")+
+    xlab("By gender")+ ylab("")+
+    theme(legend.position="none", text = element_text(size = 15), axis.text.x=element_blank(),axis.text.y =element_blank(),plot.margin = unit(c(0, 0,0,0), "pt"),
+          axis.ticks.x=element_blank())
+plotFemaleT <- ggplot(female, aes(Condition,Time, fill=Condition), colour="gray") +#stat_compare_means(paired = TRUE, size = 3, method = "wilcox.test", label.x = 1, label.y = 31, label = "p.format")+
+    geom_boxplot(show.legend = F) +
+    facet_grid(~AgeStrateBigger)+
+    #geom_line(aes(group=Paired), color="black", position = position_dodge(0.7), alpha = 0.3, show.legend = F) +
+    #geom_point(aes(group=Paired), color="black",size=2, shape=1, position = position_dodge(0.7),alpha = 0.3, show.legend = F)+
+    labs(size = "Age")+
+    xlab("Females by age")+ ylab("")+
+    theme(legend.position="none", text = element_text(size = 15), axis.text.x=element_blank(),axis.text.y =element_blank(),plot.margin = unit(c(0, 0,0,0), "pt"),
+          axis.ticks.x=element_blank())
+plotMaleT <- ggplot(male, aes(Condition,Time, fill=Condition), colour="gray") +#stat_compare_means(paired = TRUE, size = 3, method = "wilcox.test", label.x =  1, label.y = 31, label = "p.format")+
+    geom_boxplot(show.legend = T) +
+    facet_grid(~AgeStrateBigger)+
+    #geom_line(aes(group=Paired), color="black", position = position_dodge(0.7), alpha = 0.3, show.legend = F) +
+    #geom_point(aes(group=Paired), color="black",size=2, shape=1, position = position_dodge(0.7),alpha = 0.3, show.legend = F)+
+    labs(size = "Age")+
+    xlab("Males by age")+ ylab("")+
+    theme(legend.position=c(1.20,1.15), text = element_text(size = 15), axis.text.x=element_blank(),axis.text.y =element_blank(), legend.title = element_blank(),plot.margin = unit(c(0, 75,0,0), "pt"),
+          axis.ticks.x=element_blank(), legend.key.size = unit(0.5, 'cm'), legend.key.height = unit(1.5, 'cm'), legend.text = element_text(size=11))
+timeG <- grid.arrange(plotAllT,plotSexT, plotFemaleT, plotMaleT,widths=c(0.16, 0.24, 0.4, 0.54), ncol=4)
+grid.arrange(errG,timeG, nrow=2)
+
+
+
+
+
+
+
+
+
+
+#Figure 7
+gender_names <- list(
+  'Female'="F*",
+  'Male'="M"
+)
+gender_labeller <- function(variable,value){
+  return(gender_names[value])
+}
+plotAllE <-ggplot(data, aes(Condition,Easiness, fill=Condition), colour="gray") + #stat_compare_means(paired = TRUE, size = 3, method = "wilcox.test", label.x = 1, label.y = 31, label = "p.format")+
+    geom_boxplot(show.legend = F) +
+    #geom_line(aes(group=Paired), position = position_dodge(0.7), alpha = 0.3, show.legend = F) +
+    #geom_point(aes(group=Paired),size=2, shape=1, position = position_dodge(0.7),alpha = 0.3, show.legend = F)+
+    labs(size = "Age")+
+    xlab("All*")+ ylab("Easiness")+
+    theme(legend.position="none", text = element_text(size = 15), axis.text.x=element_blank(),plot.margin = unit(c(21,0,0,0), "pt"),
+          axis.ticks.x=element_blank())
+plotSexE <-ggplot(data, aes(Condition,Easiness, fill=Condition), colour="gray") +#stat_compare_means(paired = TRUE, size = 3, method = "wilcox.test", label.x = 1, label.y = 31, label = "p.format")+
+    geom_boxplot(show.legend = F) +
+    facet_grid(~Sex, labeller=gender_labeller)+
+    #geom_line(aes(group=Paired), position = position_dodge(0.7), alpha = 0.3, show.legend = F) +
+    #geom_point(aes(group=Paired),size=2, shape=1, position = position_dodge(0.7),alpha = 0.3, show.legend = F)+
+    labs(size = "Age")+
+    xlab("By gender")+ ylab("")+
+    theme(legend.position="none", text = element_text(size = 15), axis.text.x=element_blank(),axis.text.y =element_blank(),plot.margin = unit(c(0, 0,0,0), "pt"),
+          axis.ticks.x=element_blank())
+plotFemaleE <- ggplot(female, aes(Condition,Easiness, fill=Condition), colour="gray") +#stat_compare_means(paired = TRUE, size = 3, method = "wilcox.test", label.x = 1, label.y = 31, label = "p.format")+
+    geom_boxplot(show.legend = F) +
+    facet_grid(~AgeStrateBigger)+
+    #geom_line(aes(group=Paired), color="black", position = position_dodge(0.7), alpha = 0.3, show.legend = F) +
+    #geom_point(aes(group=Paired), color="black",size=2, shape=1, position = position_dodge(0.7),alpha = 0.3, show.legend = F)+
+    labs(size = "Age")+
+    xlab("Females by age")+ ylab("")+
+    theme(legend.position="none", text = element_text(size = 15), axis.text.x=element_blank(),axis.text.y =element_blank(),plot.margin = unit(c(0, 0,0,0), "pt"),
+          axis.ticks.x=element_blank())
+plotMaleE <- ggplot(male, aes(Condition,Easiness, fill=Condition), colour="gray") +#stat_compare_means(paired = TRUE, size = 3, method = "wilcox.test", label.x =  1, label.y = 31, label = "p.format")+
+    geom_boxplot(show.legend = T) +
+    facet_grid(~AgeStrateBigger)+
+    #geom_line(aes(group=Paired), color="black", position = position_dodge(0.7), alpha = 0.3, show.legend = F) +
+    #geom_point(aes(group=Paired), color="black",size=2, shape=1, position = position_dodge(0.7),alpha = 0.3, show.legend = F)+
+    labs(size = "Age")+
+    xlab("Males by age")+ ylab("")+
+    theme(legend.position="right", text = element_text(size = 15), axis.text.x=element_blank(),axis.text.y =element_blank(), legend.title = element_blank(),plot.margin = unit(c(0, 0,0,0), "pt"),
+          axis.ticks.x=element_blank(), legend.key.size = unit(0.5, 'cm'), legend.key.height = unit(1.5, 'cm'), legend.text = element_text(size=11))
+timeG <- grid.arrange(plotAllE,plotSexE, plotFemaleE, plotMaleE,widths=c(0.16, 0.24, 0.4, 0.54), ncol=4)
+
+
+
+
+
+
+
+#Table 2 Data
+wilcox.test(Error ~ Condition, data = data, paired = TRUE)
+wilcox.test(Error ~ Condition, data = male, paired = TRUE)
+wilcox.test(Error ~ Condition, data = male1825, paired = TRUE)
+wilcox.test(Error ~ Condition, data = male2640, paired = TRUE)
+wilcox.test(Error ~ Condition, data = male41, paired = TRUE)
+wilcox.test(Error ~ Condition, data = female, paired = TRUE)
+wilcox.test(Error ~ Condition, data = female1825, paired = TRUE)
+wilcox.test(Error ~ Condition, data = female2640, paired = TRUE)
+wilcox.test(Error ~ Condition, data = female41, paired = TRUE)
+describeBy(data['Error'], group=data['Condition'])
+describeBy(male['Error'], group=male['Condition'])
+describeBy(male1825['Error'], group=male1825['Condition'])
+describeBy(male2640['Error'], group=male2640['Condition'])
+describeBy(male41['Error'], group=male41['Condition'])
+describeBy(female['Error'], group=female['Condition'])
+describeBy(female1825['Error'], group=female1825['Condition'])
+describeBy(female2640['Error'], group=female2640['Condition'])
+describeBy(female41['Error'], group=female41['Condition'])
+wilcox.test(Time ~ Condition, data = data, paired = TRUE)
+wilcox.test(Time ~ Condition, data = male, paired = TRUE)
+wilcox.test(Time ~ Condition, data = male1825, paired = TRUE)
+wilcox.test(Time ~ Condition, data = male2640, paired = TRUE)
+wilcox.test(Time ~ Condition, data = male41, paired = TRUE)
+wilcox.test(Time ~ Condition, data = female, paired = TRUE)
+wilcox.test(Time ~ Condition, data = female1825, paired = TRUE)
+wilcox.test(Time ~ Condition, data = female2640, paired = TRUE)
+wilcox.test(Time ~ Condition, data = female41, paired = TRUE)
+describeBy(data['Time'], group=data['Condition'])
+describeBy(male['Time'], group=male['Condition'])
+describeBy(male1825['Time'], group=male1825['Condition'])
+describeBy(male2640['Time'], group=male2640['Condition'])
+describeBy(male41['Time'], group=male41['Condition'])
+describeBy(female['Time'], group=female['Condition'])
+describeBy(female1825['Time'], group=female1825['Condition'])
+describeBy(female2640['Time'], group=female2640['Condition'])
+describeBy(female41['Time'], group=female41['Condition'])
+wilcox.test(Easiness ~ Condition, data = data, paired = TRUE)
+wilcox.test(Easiness ~ Condition, data = male, paired = TRUE)
+wilcox.test(Easiness ~ Condition, data = male1825, paired = TRUE)
+wilcox.test(Easiness ~ Condition, data = male2640, paired = TRUE)
+wilcox.test(Easiness ~ Condition, data = male41, paired = TRUE)
+wilcox.test(Easiness ~ Condition, data = female, paired = TRUE)
+wilcox.test(Easiness ~ Condition, data = female1825, paired = TRUE)
+wilcox.test(Easiness ~ Condition, data = female2640, paired = TRUE)
+wilcox.test(Easiness ~ Condition, data = female41, paired = TRUE)
+describeBy(data['Easiness'], group=data['Condition'])
+describeBy(male['Easiness'], group=male['Condition'])
+describeBy(male1825['Easiness'], group=male1825['Condition'])
+describeBy(male2640['Easiness'], group=male2640['Condition'])
+describeBy(male41['Easiness'], group=male41['Condition'])
+describeBy(female['Easiness'], group=female['Condition'])
+describeBy(female1825['Easiness'], group=female1825['Condition'])
+describeBy(female2640['Easiness'], group=female2640['Condition'])
+describeBy(female41['Easiness'], group=female41['Condition'])
+
+
+
+
+
+
+  
+
+#Figure 7
+ggplot(asyncsound, aes(x=Age, y=Error, color=Sex), labeller=gender_labeller) + 
+ scale_fill_brewer(palette="Set1")+ scale_color_brewer(palette="Set1")+
+  geom_point()+
+    geom_smooth(aes(fill=Sex), method = lm)+
+	stat_cor(method = "spearman", show.legend = F)+ylab("Error (Sound)")+
+	theme(legend.position="bottom", legend.title = element_blank(), text = element_text(size = 12))
+	
+
+
+
+
+
+
+#Figure 8
+ggplot(asyncsound, aes(x=Sex, y=Error, color=Sex)) + facet_grid(~AgeStrateBigger)+
+ scale_fill_brewer(palette="Set1")+ scale_color_brewer(palette="Set1")+
+stat_compare_means(paired = FALSE, size=3.1, method = "wilcox.test", label.x = 0.9, label.y = 31, show.legend = F)+   
+   geom_boxplot(show.legend = F)+ylab("Error (Sound)")+xlab("")+
+	geom_point(position = position_dodge2(0.5), shape=1, size=2, show.legend = F)+
+	theme(legend.position="bottom", legend.title = element_blank(), text = element_text(size = 12))
+
+
+
+
+
+
+
+#Figure 9
+ggplot(asyncsound, aes(x=Age, y=Time, color=Sex)) + 
+ scale_fill_brewer(palette="Set1")+ scale_color_brewer(palette="Set1")+
+  geom_point()+
+    geom_smooth(aes(fill=Sex), method = lm)+
+	stat_cor(method = "spearman", show.legend = F)+ylab("Time (Sound)")+
+	theme(legend.position="bottom", legend.title = element_blank(), text = element_text(size = 12))
+	
+
+
+
+
+
+
+
+#Figure 10
+ggplot(asyncsound, aes(x=Sex, y=Time, color=Sex)) + facet_grid(~AgeStrateBigger)+
+ scale_fill_brewer(palette="Set1")+ scale_color_brewer(palette="Set1")+
+stat_compare_means(paired = FALSE, size=3.1, method = "wilcox.test", label.x = 0.9, label.y = 8100, show.legend = F)+   
+   geom_boxplot(show.legend = F)+ylab("Time (Sound)")+xlab("")+
+	geom_point(position = position_dodge2(0.5), shape=1, size=2, show.legend = F)+
+	theme(legend.position="bottom", legend.title = element_blank(), text = element_text(size = 12))
+
+	
+
+
+
+
+#Figure 11
+ggplot(nosound, aes(x=Age, y=Error, color=Sex)) + 
+ scale_fill_brewer(palette="Set1")+ scale_color_brewer(palette="Set1")+
+  geom_point()+
+    geom_smooth(aes(fill=Sex), method = lm)+
+	stat_cor(method = "spearman", show.legend = F)+ylab("Error (Mute)")+
+	theme(legend.position="bottom", legend.title = element_blank(), text = element_text(size = 12))
+	
+	
+	
+	
+#Figure 12
+ggplot(nosound, aes(x=Sex, y=Error, color=Sex)) + facet_grid(~AgeStrateBigger)+
+ scale_fill_brewer(palette="Set1")+ scale_color_brewer(palette="Set1")+
+ stat_compare_means(paired = FALSE, size=3.1, method = "wilcox.test", label.x = 0.9, label.y = 31, show.legend = F)+
+    geom_boxplot(show.legend = F)+ylab("Error (Mute)")+xlab("")+
+	geom_point(position = position_dodge2(0.5), shape=1, size=2, show.legend = F)+
+	theme(legend.position="bottom", legend.title = element_blank(), text = element_text(size = 12))
+
+
+
+
+
+
+#Figure 13
+ggplot(nosound, aes(x=Age, y=Time, color=Sex)) + 
+ scale_fill_brewer(palette="Set1")+ scale_color_brewer(palette="Set1")+
+  geom_point()+
+    geom_smooth(aes(fill=Sex), method = lm)+
+	stat_cor(method = "spearman", show.legend = F)+ylab("Time (Mute)")+
+	theme(legend.position="bottom", legend.title = element_blank(), text = element_text(size = 12))
+	
+
+
+
+
+
+
+	
+
+
+
+#Figure 14
+ggplot(nosound, aes(x=Sex, y=Time, color=Sex)) + facet_grid(~AgeStrateBigger)+
+ scale_fill_brewer(palette="Set1")+ scale_color_brewer(palette="Set1")+
+ stat_compare_means(paired = FALSE, size=3.1, method = "wilcox.test", label.x = 0.9, label.y = 8100, show.legend = F)+  
+   geom_boxplot(show.legend = F)+ylab("Time (Mute)")+xlab("")+
+	geom_point(position = position_dodge2(0.5), shape=1, size=2, show.legend = F)	+
+	theme(legend.position="bottom", legend.title = element_blank(), text = element_text(size = 12))
